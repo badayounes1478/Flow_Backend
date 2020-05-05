@@ -1,0 +1,152 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+</head>
+
+<body onload="myfunction()">
+
+    <nav class="blue darken-4">
+        <div class="nav-wrapper container">
+            <a href="#" class="brand-logo">Flow</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="http://localhost:4000/in">Home</a></li>
+                <li><a href="http://localhost:4000/blogAdd">Blogs</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <h3 class="center">Upload Songs</h3>
+    <div class="row">
+        <div class="col s12 m6 l4 offset-l3">
+            <form action="/audio/uploadfile" enctype="multipart/form-data" method="POST">
+
+                <div class="input-field col s7">
+                    <input id="file" multiple='multiple' type="file" class="validate btn" name="audio" id='file'>
+                </div>
+
+                <div class="input-field col s7">
+                    <select class="browser-default sel" id="category" name="category">
+                        <option value="value" disabled selected>select Category</option>
+                    </select>
+
+                </div>
+
+                <div class="input-field col s7">
+                    <select class="browser-default sub_sel" name="sub_category">
+                        <option value="value" disabled selected>select Sub Category</option>
+                    </select>
+                </div>
+
+                <div class="col s7">
+                    <input id="btn" type="submit" class="validate btn" name="btn">
+                </div>
+            </form>
+        </div>
+        <div class="col s12 m4 l3">
+            <form action="/audio/category" method="POST">
+
+                <div class="input-field col s7">
+                    <input id="category_type" type="text" class="validate" name="category">
+                    <label for="category_type">Add Category</label>
+                </div>
+
+                <div class="col s7">
+                    <input id="btn" type="submit" class="validate btn" name="btn">
+                </div>
+            </form>
+
+            <form action="/audio/sub_category" method="POST">
+
+                <div class="input-field col s7">
+                    <input id="subcategory_type" type="text" class="validate" name="sub_category">
+                    <label for="subcategory_type">Add Sub Category</label>
+                </div>
+
+                <div class="col s7">
+                    <input id="btn" type="submit" class="validate btn" name="btn">
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="row showSongs">
+
+    </div>
+
+
+
+</body>
+
+<script>
+
+    $(document).ready(function () {
+        $('select').formSelect();
+    });
+
+    const myfunction = () => {
+
+        fetch('http://localhost:4000/audio/category/all')
+            .then(response => response.json())
+            .then(json => {
+                json.map(data => {
+                    $('.sel').append(`<option value=${data.category}>${data.category}</option>`)
+                })
+            })
+
+        fetch('http://localhost:4000/audio/sub_category/all')
+            .then(response => response.json())
+            .then(json => {
+                json.map(data => {
+                    $('.sub_sel').append(`<option value=${data.sub_category}>${data.sub_category}</option>`)
+                })
+            })
+
+
+        fetch('http://localhost:4000/audio/all')
+            .then(response => response.json())
+            .then(json => {
+                json.map((data, i) => {
+                    $('.showSongs').append(`<div class="col s12 m4 l4 ${i}">
+                        <h5>${data.category}<h5>
+                            <h6>${data.sub_category}<h6>
+                                <span class="m${i}">${data.filename}</span>
+                        </div>`)
+                    $(`.${i}`).append(`<div id=${i} class="btn ${data._id}">Delete Song</div>`).attr('onClick', `deleteSong(${i})`)
+                })
+            })
+
+    }
+
+    const deleteSong = (id) => {
+        var className = '.' + $(`#${id}`).attr('class').split(' ').join('.')
+
+        let data = className.substring(5)
+        let songId = data.slice(0, 24)
+
+        let songName = $(".m"+id).text()
+
+      
+        console.log(songId)
+
+        fetch('http://localhost:4000/audio/' + songId + '/' + songName, {
+            method: 'DELETE',
+        }).then(res => res.json())
+        .then(res => location.reload())
+
+    }
+
+</script>
+
+</html>

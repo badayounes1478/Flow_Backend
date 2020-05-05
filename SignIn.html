@@ -1,0 +1,49 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <title>Sign In</title>
+</head>
+
+<body>
+
+    <div class="row">
+        <div class="col l4 m8 s12 offset-l4 offset-m2" style="margin-top:100px">
+            <div class="input-field center-align">
+                <input id="UserName" type="text" class="validate" />
+                <label for="UserName">User Name</label>
+            </div>
+            <div class="input-field center-align">
+                <input id="password" type="password" class="validate" />
+                <label for="password">Password</label>
+            </div>
+            <div class="btn orange" onclick="mg()">
+                Login
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    function mg() {
+        let username = document.getElementById('UserName')
+        let password = document.getElementById('password')
+        if (username.value === "mayur" && password.value === "123") {
+            window.location.pathname = "/in";
+            document.getElementById('UserName').value = ""
+            document.getElementById('password').value = ""
+
+        } else {
+            alert('Invalid User')
+        }
+    }
+</script>
+
+</html>

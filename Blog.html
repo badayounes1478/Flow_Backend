@@ -1,0 +1,94 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+
+<body onload="myfunction()">
+
+    <nav class="blue darken-4">
+        <div class="nav-wrapper container">
+            <a href="#" class="brand-logo">Flow</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="http://localhost:4000/in">Home</a></li>
+                <li><a href="http://localhost:4000/blogAdd">Blogs</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <h3 class="center">Upload Blog</h3>
+    <div class="row">
+        <div class="col s12 m6 l4 offset-l2">
+            <form action="/blog/uploadblog" enctype="multipart/form-data" method="POST">
+
+                <div class="input-field col s7">
+                    <input multiple='single' id="file" type="file" class="validate btn" name="image" id='file'>
+                </div>
+
+
+                <div class="input-field col s7">
+                    <input id="title" type="text" class="validate" name="title">
+                    <label for="title">Title</label>
+                </div>
+
+                <div class="input-field col s7">
+                    <input id="content" type="text" class="validate" name="content">
+                    <label for="content">Content</label>
+                </div>
+
+                <div class="col s7">
+                    <input id="btn" type="submit" class="validate btn" name="btn">
+                </div>
+            </form>
+        </div>
+        <div class="col s12 m6 l2 offset-l2 add">
+
+        </div>
+    </div>
+
+    <script>
+        const myfunction = () => {
+
+            fetch('http://localhost:4000/blog/all')
+                .then(response => response.json())
+                .then(json => {
+                    console.log(json);
+                    json.map((data, i) => {
+                        $('.add').append(
+                            `<div class="${i}">
+                            <h6  >${data.title}</h6>
+                            <h6 class="m${i}" >${data.filename}</h6>
+                            </div>`
+                        )
+                        $(`.${i}`).append(`<div id=${i} class="btn ${data._id}">Delete Blog</div></br> </br>`).attr('onClick', `deleteBlog(${i})`)
+                    })
+                })
+
+
+        }
+        const deleteBlog = (id) => {
+            var className = '.' + $(`#${id}`).attr('class').split(' ').join('.')
+
+            let data = className.substring(5)
+            let blogId = data.slice(0, 24)
+
+
+            let blogName = $(".m" + id).text()
+            
+            fetch('http://localhost:4000/blog/' + blogId + "/" + blogName, {
+                method: 'DELETE',
+            }).then(res => res.json())
+                .then(res => location.reload())
+        }
+
+    </script>
+</body>
+
+</html>
